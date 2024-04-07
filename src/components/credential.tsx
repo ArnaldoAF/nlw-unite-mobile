@@ -3,14 +3,16 @@ import { Image, ImageBackground, Text, TouchableOpacity, View } from "react-nati
 type Props = {
     image?: string
     onChangeAvatar?: () => void
+    onShowQRCode?: () => void
 }
 
 import { Feather } from "@expo/vector-icons"
 import { colors } from "@/styles/colors";
+import { QRCode } from "@/components/qrcode";
 
 
 
-export function Credential({ onChangeAvatar, image }: Props) {
+export function Credential({ onChangeAvatar, onShowQRCode,  image }: Props) {
     return (
         <View className="w-full self-stretch items-center">
             <Image source={require("@/assets/ticket/band.png")}
@@ -54,10 +56,10 @@ export function Credential({ onChangeAvatar, image }: Props) {
                 <Text className="font-bold text-2xl text-zinc-50 mt-4">Arnaldo Assis</Text>
                 <Text className="font-regular text-base text-zinc-300 mb-4">arnaldo@outlook.com</Text>
 
-                <Image source={require("@/assets/ticket/qrcode.png")} className="w-32 h-32 mb-6" />
+                <QRCode value="teste" size={120}/>
 
-                <TouchableOpacity activeOpacity={0.7} className="mt-7">
-                    <Text className="font-body text-sm text-orange-500">Ampliar QRCode</Text>
+                <TouchableOpacity activeOpacity={0.7} className="mt-7" onPress={onShowQRCode}>
+                    <Text className="font-body text-sm text-orange-500 mt-7">Ampliar QRCode</Text>
                 </TouchableOpacity>
 
 
