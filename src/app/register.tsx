@@ -6,17 +6,50 @@ import { Input } from '@/components/input'
 import { colors } from '@/styles/colors'
 import { Button } from '@/components/button'
 import { useState } from 'react'
+import axios from "axios"
+
+const EVENT_ID = "9e9bd979-9d10-4915-b339-3786b1634f33"
+
+import {api} from "@/server/api"
+import { useBadgeStore } from '@/store/badge-store'
 
 export default function Register() {
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
+    const badgeStore = useBadgeStore()
 
-    function handleRegister() {
-        if(!name.trim() || !email.trim()) {
-            return Alert.alert("Credencial", "Informe o nome ou email")
-        }
 
-        router.push("/ticket")
+    async function handleRegister() {
+        try {
+            if(!name.trim() || !email.trim()) {
+                return Alert.alert("Credencial", "Informe o nome ou email")
+            }
+    
+            setIsLoading(true)
+            const registerResponse = await api.post(`events/${EVENT_ID}/attendees`, {name, email})
+
+            if(registerResponse.data.attendeeId) {
+                const { data } = await api.get(`/attendees/${registerResponse.data.attendeeId}/badge`)
+                badgeStore.save(data.badge)
+                Alert.alert("Inscrição", "Incrição realizada com sucesso!", [
+                    {text: "ok", onPress: () => router.push("/ticket")}
+                ])
+            }
+
+    
+
+        } catch (error) {
+            console.log(error)
+            setIsLoading(false)
+
+            if(axios.isAxiosError(error)) {
+                if(String(error.response?.data.message).includes("already registered")) {
+                    return Alert.alert("Incrição", "Este e-mail já está cadastrado")
+                }
+            }
+            Alert.alert("Inscrição", "Não foi possível fazer a inscrição")
+        } 
     }
     return (
         <View className="flex-1 bg-green-500 items-center justify-center">
@@ -44,7 +77,7 @@ export default function Register() {
                     />
                 </Input>
 
-                <Button title="Realizar inscrição" onPress={handleRegister}/>
+                <Button title="Realizar inscrição" isLoading={isLoading} disabled={isLoading} onPress={handleRegister}/>
 
                 <Link href="/" className='text-gray-100 text-base font-bold text-center mt-8'>
                     Já possui ingresso?
