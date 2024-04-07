@@ -1,17 +1,38 @@
 import { Credential } from "@/components/credential";
 import { Header } from "@/components/header";
-import {  ScrollView, StatusBar, Text, TouchableOpacity, View } from "react-native";
+import {  Alert, ScrollView, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { FontAwesome } from "@expo/vector-icons"
 import { colors } from "@/styles/colors";
 import { Button } from "@/components/button";
+import { useState } from "react";
+import * as ImagePicker from "expo-image-picker"
 
 export default function Ticket() {
+
+    const [image, useImage] = useState("")
+
+    async function handleSelectImage() {
+        try {
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [4,4],
+            })
+
+            if(result.assets){
+                useImage(result.assets[0].uri)
+            }
+        } catch (error) {
+            console.log(error)
+            Alert.alert("Foto", "Erro na foto")
+        }
+    }
     return (
         <View className="flex-1 bg-green-500">
             <StatusBar barStyle="light-content" />
             <Header title="Minha Credencial" />
             <ScrollView className="-mt-28 -z-10" contentContainerClassName="px-8 pb-8">
-                <Credential />
+                <Credential image={image} onChangeAvatar={handleSelectImage}/>
 
                 <FontAwesome
                     name="angle-double-down"

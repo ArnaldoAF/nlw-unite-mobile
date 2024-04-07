@@ -1,6 +1,16 @@
 import { Image, ImageBackground, Text, TouchableOpacity, View } from "react-native";
 
-export function Credential() {
+type Props = {
+    image?: string
+    onChangeAvatar?: () => void
+}
+
+import { Feather } from "@expo/vector-icons"
+import { colors } from "@/styles/colors";
+
+
+
+export function Credential({ onChangeAvatar, image }: Props) {
     return (
         <View className="w-full self-stretch items-center">
             <Image source={require("@/assets/ticket/band.png")}
@@ -19,9 +29,28 @@ export function Credential() {
                     <View className="w-40 h-40 bg-black rounded-full" />
 
                 </ImageBackground>
+                {image ? (
+                    <TouchableOpacity
+                    activeOpacity={0.9}
+                    className="w-36 h-36 rounded-full -mt-24 bg-gray-400 items-center justify-center"
+                    onPressOut={onChangeAvatar}>
+                        <Image source={{ uri: image }} className="w-36 h-36 rounded-full -mt-24" />
+                        
+                    </TouchableOpacity>
+                )
+                    : (
+                        <TouchableOpacity
+                            activeOpacity={0.9}
+                            className="w-36 h-36 rounded-full -mt-24 bg-gray-400 items-center justify-center"
+                            onPressOut={onChangeAvatar}>
+                            <View className="w-36 h-36 rounded-full -mt-24 bg-gray-400 items-center justify-center">
 
-                <Image source={{ uri: "https://github.com/arnaldoaf.png" }} className="w-36 h-36 rounded-full -mt-24" />
+                                <Feather name="camera" color={colors.green[400]} size={32} />
+                            </View>
 
+                        </TouchableOpacity>
+                    )
+                }
                 <Text className="font-bold text-2xl text-zinc-50 mt-4">Arnaldo Assis</Text>
                 <Text className="font-regular text-base text-zinc-300 mb-4">arnaldo@outlook.com</Text>
 
