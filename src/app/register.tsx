@@ -27,7 +27,10 @@ export default function Register() {
             }
     
             setIsLoading(true)
-            const registerResponse = await api.post(`events/${EVENT_ID}/attendees`, {name, email})
+            const registerURL = `events/${EVENT_ID}/attendees`
+            console.log(registerURL)
+            const registerResponse = await api.post(registerURL, {name, email})
+            console.log("registro completo")
 
             if(registerResponse.data.attendeeId) {
                 const { data } = await api.get(`/attendees/${registerResponse.data.attendeeId}/badge`)
